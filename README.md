@@ -42,20 +42,6 @@ python privacy_invaders.py
    - **Q** = Quit to desktop
    - That's it! Maximum fun, minimum complexity.
 
-## 🎯 What You'll See
-
-```
-  ╔════════════════════════════════════════════════════════════╗
-  ║                    PRIVACY INVADERS                        ║
-  ║                                                            ║
-  ║        *  .        ╱▔▔╲       .    *        .              ║
-  ║    .        *     ╱╲══╱╲   .            *                  ║
-  ║        .         ╱  ><  ╲        .            .            ║
-  ║    *        .    ▔▔╱▔▔╲▔▔    *        .                    ║
-  ║                                                            ║
-  ╚════════════════════════════════════════════════════════════╝
-
-  Press any key to launch nuke or Q to Quit
 ```
 
 When you fire, you'll see:
@@ -194,5 +180,3 @@ And every time you see that ship floating through space, waiting for your comman
 *"Privacy protection should be a power-up, not a penalty."*
 
 ---
-
-**Press any key to start protecting your privacy... except Q, that quits.**

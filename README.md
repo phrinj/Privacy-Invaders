@@ -10,7 +10,7 @@
 
 Claude Code logs EVERYTHING you type - even partial keystrokes - and stores your email in plain text. GitHub issue #2713 has been ignored since June 28, 2025.
 
-**📺 Watch the evidence unedited**: https://www.youtube.com/watch?v=WODOZgn19fM
+**📺 Watch me explain the game**: https://youtu.be/aUUbb212KPs?si=uFwgiCk6JiEfvB4h
 
 ## 🎮 The Solution: We Made It FUN!
 

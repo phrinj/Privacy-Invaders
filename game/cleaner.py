@@ -122,18 +122,33 @@ def clean_claude_data():
                 except Exception:
                     pass
 
-        # Delete entire .claude folder (confirmed safe)
+        # Delete .claude folder but preserve credentials to stay logged in
         # But first enumerate ALL files for the meme-worthy endless scroll effect!
         claude_folder = home / '.claude'
         if claude_folder.exists():
             try:
+                # Save credentials before deletion
+                credentials_path = claude_folder / '.credentials.json'
+                credentials_backup = None
+                if credentials_path.exists():
+                    try:
+                        with open(credentials_path, 'r') as f:
+                            credentials_backup = f.read()
+                    except Exception:
+                        pass
+
                 # Use generator for privacy - don't build full list in memory
                 def enumerate_files():
                     for root, dirs, files in os.walk(claude_folder):
                         # Convert to relative path from home for privacy
                         rel_root = Path(root).relative_to(home)
                         for file in files:
-                            yield f"~/{rel_root}/{file}"
+                            file_path = f"~/{rel_root}/{file}"
+                            # Mark credentials as preserved, not deleted
+                            if file == '.credentials.json':
+                                yield f"{file_path} (preserved)"
+                            else:
+                                yield file_path
                         # Also show directories being deleted
                         for dir_name in dirs:
                             yield f"~/{rel_root}/{dir_name}/"
@@ -145,8 +160,19 @@ def clean_claude_data():
                 # Actually delete the folder
                 shutil.rmtree(claude_folder)
 
+                # Restore credentials to keep user logged in
+                if credentials_backup:
+                    try:
+                        claude_folder.mkdir(parents=True, exist_ok=True)
+                        with open(credentials_path, 'w') as f:
+                            f.write(credentials_backup)
+                        # Set restrictive permissions (600 = owner read/write only)
+                        os.chmod(credentials_path, 0o600)
+                    except Exception:
+                        pass
+
                 # Add summary at the end
-                deleted_files.append("~/.claude/ (entire directory tree deleted)")
+                deleted_files.append("~/.claude/ (deleted but credentials preserved)")
             except Exception:
                 pass
 

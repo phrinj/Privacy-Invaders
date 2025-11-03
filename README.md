@@ -26,7 +26,7 @@ Privacy Invaders is a zen space journey where you:
 
 ## ✨ Latest Features (November 2025)
 
-- **OAuth Preservation**: Stay logged in after nuking - no re-authentication needed! Finally, Claude remembers SOMETHING you'd want to keep.
+- **OAuth Preservation**: The `.claude/.credentials.json` file is preserved so you stay logged in after nuking - no re-authentication needed! We learned this the hard way.
 - **Complete Transparency**: Watch EVERY file scroll by - dozens for light users, hundreds or THOUSANDS for heavy users. The endless scroll is a feature, not a bug!
 - **Streamlined Interface**: No quit button, no welcome screen - just pure privacy destruction. Press ANY key and watch the show.
 - **Verified Deletion**: Confirmed to delete ALL Claude Code tracking data as of Nov 2, 2025. We checked. Every. Single. File.
@@ -77,15 +77,15 @@ When you fire, you'll see:
 
 Each time you fire, the game deletes:
 - `~/.claude.json` - Surgically cleaned of tracking data while preserving OAuth
-- `~/.claude/` - ENTIRE directory tree with all its subdirectories:
-  - `/file-history/*` - Every version of every file you've edited
-  - `/projects/*` - All session data and conversation logs
-  - `/shell-snapshots/*` - Every command you've ever run
-  - `/debug/*` - All debug logs Claude secretly keeps
-  - Plus dozens more hidden directories and files!
+- `~/.claude/` - ENTIRE directory tree nuked, then rebuilt with only essentials:
+  - `/file-history/*` - DELETED - Every version of every file you've edited
+  - `/projects/*` - DELETED - All session data and conversation logs
+  - `/shell-snapshots/*` - DELETED - Every command you've ever run
+  - `/debug/*` - DELETED - All debug logs Claude secretly keeps
+  - Plus dozens more hidden directories and files - ALL DELETED!
 
 What survives (because we're not monsters):
-- **OAuth tokens** - You stay logged in! No re-authentication needed!
+- **`.claude/.credentials.json`** - OAuth tokens preserved! You stay logged in!
 - MCP server configurations (needed for functionality)
 - Your sanity (no more privacy paranoia!)
 
@@ -103,7 +103,7 @@ A: No! Play whenever you want to clear your data. Once a day, once a week, or af
 A: Nope! Claude rebuilds what it needs. You're just clearing YOUR data, not Claude's functionality.
 
 **Q: Do I have to log in again after cleaning?**
-A: NO! OAuth tokens are preserved. You stay logged in. Finally, Claude remembers SOMETHING you'd want to keep!
+A: NO! The `.claude/.credentials.json` file (containing OAuth tokens) is preserved. You stay logged in. Finally, Claude remembers SOMETHING you'd want to keep!
 
 **Q: How many files will be deleted?**
 A: Depends on your usage. Light users: dozens. Regular users: hundreds. Power users who've never cleaned: THOUSANDS! The credits will scroll endlessly. Grab popcorn.

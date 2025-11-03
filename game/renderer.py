@@ -45,8 +45,10 @@ class Renderer:
                 print("║" + ''.join(row) + "║")
             print("╚" + "═" * self.width + "╝")
             # print(f"\n  Privacy Violations Destroyed: {violations_count}")  # Removed redundant text
-            # print(f"  {status_text:<60}")  # Removed all text below game area
-            print("\n  Press any key to launch nuke")
+            print(f"  {status_text:<60}")
+            # Only show instructions when idle (no status text)
+            if not status_text:
+                print("\n  Press any key to launch nuke")
             # print("  NOTE: You'll need to re-login each Claude terminal session")  # Removed all text below game area
             self.border_drawn = True
             self.last_status = status_text
@@ -56,10 +58,9 @@ class Renderer:
                 print(f"\033[{i+2};1H║" + ''.join(row) + "║", end="")
 
             # Update status if changed
-            # Removed all text below game area
-            # if status_text != self.last_status:
-            #     print(f"\033[{self.height + 4};3H  {status_text:<60}", end="")
-            #     self.last_status = status_text
+            if status_text != self.last_status:
+                print(f"\033[{self.height + 4};3H  {status_text:<60}", end="")
+                self.last_status = status_text
 
             # Update violations count - Removed redundant text
             # print(f"\033[{self.height + 3};3HPrivacy Violations Destroyed: {violations_count}  ", end="")

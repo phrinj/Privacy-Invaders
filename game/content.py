@@ -55,9 +55,9 @@ WELCOME_TEXT = """
 # Game over screen text
 GAME_OVER_TEXT = """
   ╔════════════════════════════════════════╗
-  ║         MISSION COMPLETE                ║
-  ║  Total Violations Destroyed: {count:4d}      ║
-  ║                                         ║
+  ║         MISSION COMPLETE               ║
+  ║  Total Violations Destroyed: {count:6d}    ║
+  ║                                        ║
   ║     Your privacy remains intact!       ║
-  ╚════════════════════════════════════╝
+  ╚════════════════════════════════════════╝
 """

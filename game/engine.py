@@ -70,16 +70,16 @@ class PrivacyInvaders:
             # Check for input
             key = get_input()
             if key is not None:  # Any key launches nuke
-                # Launch nuke!
-                animate_nuke(self, self.renderer)
+                # Launch nuke and get the one-liner!
+                one_liner = animate_nuke(self, self.renderer)
 
                 # Clean actual files (preserves OAuth token only)
                 deleted_files = clean_claude_data()
                 self.violations_destroyed += len(deleted_files)
 
-                # Show scrolling credits of deleted files
+                # Show scrolling credits of deleted files with the one-liner
                 if deleted_files:
-                    show_deletion_credits(self, self.renderer, deleted_files)
+                    show_deletion_credits(self, self.renderer, deleted_files, one_liner)
 
                 # Exit game after credits
                 self.running = False

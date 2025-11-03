@@ -64,14 +64,15 @@ def animate_nuke(game, renderer):
         renderer.render(temp_buffer, game.violations_destroyed, "BOOM!")
         time.sleep(0.15)
 
-    # Show one-liner
+    # Show one-liner (stays on screen during file deletion)
     one_liner = random.choice(ONE_LINERS)
     renderer.render([[' '] * game.width for _ in range(game.height)],
                    game.violations_destroyed, one_liner)
-    time.sleep(2)
+
+    return one_liner  # Return it so credits can keep displaying it
 
 
-def show_deletion_credits(game, renderer, deleted_files):
+def show_deletion_credits(game, renderer, deleted_files, one_liner):
     """Show a scrolling credits sequence of deleted files"""
     import gc  # For explicit garbage collection
 
@@ -127,8 +128,8 @@ def show_deletion_credits(game, renderer, deleted_files):
                     if 0 <= x_offset + j < game.width:
                         buffer[y][x_offset + j] = char
 
-        # Render - force redraw on first frame
-        renderer.render(buffer, game.violations_destroyed, "DELETION COMPLETE",
+        # Render - keep showing the one-liner throughout
+        renderer.render(buffer, game.violations_destroyed, one_liner,
                        force_full_redraw=(frame == 0))
 
         # Move credits up

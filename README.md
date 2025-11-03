@@ -29,8 +29,33 @@ Privacy Invaders is a zen space journey where you:
 - **OAuth Preservation**: The `.claude/.credentials.json` file is preserved so you stay logged in after nuking - no re-authentication needed! We learned this the hard way.
 - **Complete Transparency**: Watch EVERY file scroll by - dozens for light users, hundreds or THOUSANDS for heavy users. The endless scroll is a feature, not a bug!
 - **Streamlined Interface**: No quit button, no welcome screen - just pure privacy destruction. Press ANY key and watch the show.
+- **One-Liners That Actually Show**: Fixed bug where epic one-liners like "ULTRA KILL...ed a potential data breach" were selected but never displayed. Now you get the punchline!
+- **No More Awkward Pauses**: Removed the 2-second artificial delay - one-liners now display immediately while files are being enumerated.
+- **One-Liners Stay Visible**: The one-liner now stays on screen throughout the entire credits sequence until the game exits, instead of disappearing.
+- **Instructions Disappear on Launch**: "Press any key" text now hides immediately when you fire, keeping the screen clean during the nuke sequence.
 - **Verified Deletion**: Confirmed to delete ALL Claude Code tracking data as of Nov 2, 2025. We checked. Every. Single. File.
 - **Easter Egg**: For those brave enough to peek at their .claude.json afterward... 🦖
+
+## ⚠️ CRITICAL WARNING: When NOT to Play
+
+**DO NOT run this game while Claude Code is actively thinking or processing a response!**
+
+If you launch the privacy nuke while waiting for Claude Code to answer, you can create a race condition that causes Claude Code to glitch out or crash. This happens because:
+- Claude Code is trying to write/read files
+- The game is deleting those same files
+- Result: Confused AI, broken sessions, bad times
+
+**Safe times to play:**
+- ✅ When you're NOT actively waiting for a Claude Code response
+- ✅ Between conversations when Claude Code is idle
+- ✅ After you've finished a task and Claude Code isn't working on anything
+
+**Unsafe times to play:**
+- ❌ While Claude Code is "thinking" or "working"
+- ❌ While you're waiting for a response from Claude Code
+- ❌ During active file operations or git commits
+
+**Rule of thumb:** If you see Claude Code's status indicator showing activity, wait until it's done before firing the nuke!
 
 ## 🕹️ How to Play
 
@@ -66,10 +91,11 @@ When you fire, you'll see:
 - Fighting file systems is like playing whack-a-mole with errors
 
 **The Game Solution:**
-- YOU decide when to nuke your data (no race conditions!)
+- YOU decide when to nuke your data (no race conditions when Claude is idle!)
 - It's actually enjoyable to protect your privacy
 - Watching files explode > watching error messages
-- Manual control = no file conflicts
+- Manual control = no file conflicts (as long as you wait for Claude to finish thinking!)
+- Play between tasks, not during them
 
 ## 📊 What Gets Nuked
 
@@ -99,8 +125,11 @@ A: We spent weeks fighting race conditions as Claude and our cleaner battled ove
 **Q: Do I need to keep it running?**
 A: No! Play whenever you want to clear your data. Once a day, once a week, or after sensitive conversations.
 
+**Q: When is it safe to run this?**
+A: ONLY when Claude Code is idle and not processing anything. DO NOT run while Claude Code is thinking, working, or waiting to respond - this creates race conditions that can crash your session. Wait until Claude Code is done before launching the nuke!
+
 **Q: Will this break Claude Code?**
-A: Nope! Claude rebuilds what it needs. You're just clearing YOUR data, not Claude's functionality.
+A: Not if you run it at the right time! Claude rebuilds what it needs. Just don't run it WHILE Claude is actively working - that's when race conditions happen. Run it between tasks when Claude is idle.
 
 **Q: Do I have to log in again after cleaning?**
 A: NO! The `.claude/.credentials.json` file (containing OAuth tokens) is preserved. You stay logged in. Finally, Claude remembers SOMETHING you'd want to keep!

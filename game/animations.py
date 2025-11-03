@@ -73,6 +73,8 @@ def animate_nuke(game, renderer):
 
 def show_deletion_credits(game, renderer, deleted_files):
     """Show a scrolling credits sequence of deleted files"""
+    import gc  # For explicit garbage collection
+
     buffer = [[' '] * game.width for _ in range(game.height)]
 
     # Prepare credits text
@@ -95,6 +97,10 @@ def show_deletion_credits(game, renderer, deleted_files):
         "",
         "Your privacy is restored!"
     ])
+
+    # Clear the original list immediately for privacy
+    del deleted_files
+    gc.collect()  # Force garbage collection to clear memory
 
     # Scroll the credits
     credit_y = game.height

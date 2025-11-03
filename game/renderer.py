@@ -46,7 +46,7 @@ class Renderer:
             print("╚" + "═" * self.width + "╝")
             # print(f"\n  Privacy Violations Destroyed: {violations_count}")  # Removed redundant text
             # print(f"  {status_text:<60}")  # Removed all text below game area
-            print("\n  Press any key to launch nuke or Q to Quit")
+            print("\n  Press any key to launch nuke")
             # print("  NOTE: You'll need to re-login each Claude terminal session")  # Removed all text below game area
             self.border_drawn = True
             self.last_status = status_text

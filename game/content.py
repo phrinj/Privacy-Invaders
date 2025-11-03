@@ -46,14 +46,11 @@ STAR_COUNT = 15
 
 # Welcome screen text
 WELCOME_TEXT = """
-  ╔════════════════════════════════════════════════════════════╗
-  ║                    PRIVACY INVADERS                        ║
-  ║                                                            ║
-  ║   WARNING: Claude sessions that are open will remain       ║
-  ║   logged in, but new ones will require login again.        ║
-  ║                                                            ║
-  ║          Press any key to launch into cyberspace.          ║
-  ╚════════════════════════════════════════════════════════════╝"""
+  ╔════════════════════════════════════════╗
+  ║         PRIVACY INVADERS               ║
+  ║                                        ║
+  ║     Press any key to continue          ║
+  ╚════════════════════════════════════════╝"""
 
 # Game over screen text
 GAME_OVER_TEXT = """

@@ -7,10 +7,10 @@ from pathlib import Path
 from .content import (
     GAME_WIDTH, GAME_HEIGHT, STAR_COUNT,
     STAR_CHARS, STAR_SPEEDS, SHIP_FRAMES,
-    WELCOME_TEXT, GAME_OVER_TEXT
+    GAME_OVER_TEXT
 )
 from .renderer import Renderer
-from .input_handler import get_input, wait_for_key
+from .input_handler import get_input
 from .cleaner import clean_claude_data
 from .animations import animate_nuke, show_deletion_credits
 
@@ -51,9 +51,6 @@ class PrivacyInvaders:
 
     def run(self):
         """Main game loop"""
-        print(WELCOME_TEXT)
-        wait_for_key()
-
         while self.running:
             # Draw idle animation
             buffer = [[' '] * self.width for _ in range(self.height)]
@@ -72,20 +69,20 @@ class PrivacyInvaders:
 
             # Check for input
             key = get_input()
-            if key == 'q':
-                self.running = False
-                break
-            elif key is not None:  # Any key except 'q' launches nuke
+            if key is not None:  # Any key launches nuke
                 # Launch nuke!
                 animate_nuke(self, self.renderer)
 
-                # Clean actual files
+                # Clean actual files (preserves OAuth token only)
                 deleted_files = clean_claude_data()
                 self.violations_destroyed += len(deleted_files)
 
                 # Show scrolling credits of deleted files
                 if deleted_files:
                     show_deletion_credits(self, self.renderer, deleted_files)
+
+                # Exit game after credits
+                self.running = False
 
             # Low framerate for chill vibes
             time.sleep(0.5)

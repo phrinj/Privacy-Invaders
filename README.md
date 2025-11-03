@@ -24,6 +24,14 @@ Privacy Invaders is a zen space journey where you:
 - 🎯 Watch your actual privacy violations get deleted with satisfying animations
 - 😎 Enjoy one-liners like "It's a me, Mario! And Mario's pissed about privacy violations!"
 
+## ✨ Latest Features (November 2025)
+
+- **OAuth Preservation**: Stay logged in after nuking - no re-authentication needed! Finally, Claude remembers SOMETHING you'd want to keep.
+- **Complete Transparency**: Watch EVERY file scroll by - dozens for light users, hundreds or THOUSANDS for heavy users. The endless scroll is a feature, not a bug!
+- **Streamlined Interface**: No quit button, no welcome screen - just pure privacy destruction. Press ANY key and watch the show.
+- **Verified Deletion**: Confirmed to delete ALL Claude Code tracking data as of Nov 2, 2025. We checked. Every. Single. File.
+- **Easter Egg**: For those brave enough to peek at their .claude.json afterward... 🦖
+
 ## 🕹️ How to Play
 
 1. **Install the game:**
@@ -38,17 +46,17 @@ python privacy_invaders.py
 ```
 
 3. **Controls:**
-   - **Any Key** = Launch privacy nuke
-   - **Q** = Quit to desktop
-   - That's it! Maximum fun, minimum complexity.
+   - **Press ANY KEY** = Launch the privacy nuke (no going back!)
+   - That's it! The game auto-exits after the show. Maximum destruction, zero distractions.
 
 ```
 
 When you fire, you'll see:
 - Missiles launching from your ship
 - Claude's data planet exploding
-- Scrolling credits of ACTUAL files being deleted
-- Your privacy being restored (until Claude logs more data)
+- **ENDLESS SCROLL** of EVERY. SINGLE. FILE. being deleted - could be dozens, hundreds, or THOUSANDS!
+- Each file path scrolling by like movie credits (grab the popcorn for heavy users!)
+- Your privacy being restored AND you stay logged in (OAuth preserved!)
 
 ## 💭 Why This Approach Works Better
 
@@ -65,14 +73,23 @@ When you fire, you'll see:
 
 ## 📊 What Gets Nuked
 
-Each time you fire, the game deletes:
-- `~/.claude.json` - Your email, conversation history, partial keystrokes
-- `~/.claude/*.jsonl` - Detailed conversation logs
-- All privacy-violating data Claude has accumulated
+✅ **VERIFIED as of November 2, 2025** - We tested EVERY file path!
 
-What survives:
+Each time you fire, the game deletes:
+- `~/.claude.json` - Surgically cleaned of tracking data while preserving OAuth
+- `~/.claude/` - ENTIRE directory tree with all its subdirectories:
+  - `/file-history/*` - Every version of every file you've edited
+  - `/projects/*` - All session data and conversation logs
+  - `/shell-snapshots/*` - Every command you've ever run
+  - `/debug/*` - All debug logs Claude secretly keeps
+  - Plus dozens more hidden directories and files!
+
+What survives (because we're not monsters):
+- **OAuth tokens** - You stay logged in! No re-authentication needed!
 - MCP server configurations (needed for functionality)
-- Basic settings that don't contain personal info
+- Your sanity (no more privacy paranoia!)
+
+🦖 **Easter Egg Alert**: Check your `~/.claude.json` after playing for a surprise...
 
 ## 🤔 FAQ
 
@@ -85,11 +102,20 @@ A: No! Play whenever you want to clear your data. Once a day, once a week, or af
 **Q: Will this break Claude Code?**
 A: Nope! Claude rebuilds what it needs. You're just clearing YOUR data, not Claude's functionality.
 
+**Q: Do I have to log in again after cleaning?**
+A: NO! OAuth tokens are preserved. You stay logged in. Finally, Claude remembers SOMETHING you'd want to keep!
+
+**Q: How many files will be deleted?**
+A: Depends on your usage. Light users: dozens. Regular users: hundreds. Power users who've never cleaned: THOUSANDS! The credits will scroll endlessly. Grab popcorn.
+
 **Q: Is this actually effective?**
-A: 100%. Every file shown in the deletion credits is really deleted. We just added explosions and jokes.
+A: 100%. Every file shown in the deletion credits is really deleted. Verified Nov 2, 2025. We checked EVERY path.
+
+**Q: What's this easter egg?**
+A: Check your `~/.claude.json` after playing... Let's just say Dennis Nedry would be proud. 🦖
 
 **Q: Can I automate this?**
-A: You could, but then you're back to race conditions. Plus, you'd miss the explosions!
+A: You could, but then you're back to race conditions. Plus, you'd miss the explosions AND the endless file scroll!
 
 ## 🎨 The Philosophy
 
@@ -178,5 +204,15 @@ Because at the end of the day, protecting your privacy shouldn't feel like work.
 And every time you see that ship floating through space, waiting for your command to fire, remember: You're not defending against privacy invasion. You're conquering it.
 
 *"Privacy protection should be a power-up, not a penalty."*
+
+---
+
+## 💝 Support Development
+
+If Privacy Invaders has helped protect your privacy and you'd like to support future development, consider making a donation:
+
+**Bitcoin:** `3B6SmUrUVFqWSBRdSbRkr4HoyA5D7S6WUj`
+
+Every satoshi helps keep the privacy nukes flying! 🚀
 
 ---

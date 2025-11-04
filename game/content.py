@@ -54,10 +54,18 @@ WELCOME_TEXT = """
 
 # Game over screen text
 GAME_OVER_TEXT = """
-  ╔════════════════════════════════════════╗
-  ║         MISSION COMPLETE               ║
-  ║  Total Violations Destroyed: {count:6d}    ║
-  ║                                        ║
-  ║     Your privacy remains intact!       ║
-  ╚════════════════════════════════════════╝
+  ╔══════════════════════════════════════════════════╗
+  ║            MISSION COMPLETE                      ║
+  ║     Total Violations Destroyed: {count:6d}           ║
+  ║                                                  ║
+  ║        Your privacy remains intact!              ║
+  ║                                                  ║
+  ║  Support this project:                           ║
+  ║  BTC: 3B6SmUrUVFqWSBRdSbRkr4HoyA5D7S6WUj         ║
+  ║                                                  ║
+  ║  Follow @phrinj on:                              ║
+  ║  YouTube | Instagram | Threads                   ║
+  ║                                                  ║
+  ║  phrinj.com                                      ║
+  ╚══════════════════════════════════════════════════╝
 """

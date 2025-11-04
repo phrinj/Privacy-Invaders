@@ -97,15 +97,6 @@ def show_deletion_credits(game, renderer, deleted_files, one_liner):
         f"TOTAL FILES NUKED: {len(deleted_files)}",
         "",
         "Your privacy is restored!",
-        "",
-        "",
-        "Support this project:",
-        "Bitcoin: 3B6SmUrUVFqWSBRdSbRkr4HoyA5D7S6WUj",
-        "",
-        "Follow @phrinj on:",
-        "YouTube | Instagram",
-        "",
-        "phrinj.com"
     ])
 
     # Clear the original list immediately for privacy

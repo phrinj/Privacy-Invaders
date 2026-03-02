@@ -13,13 +13,21 @@ class Renderer:
         self.last_status = ""
         self.border_drawn = False
 
-        # Initialize colorama on Windows
+        # Enable ANSI on Windows
         if sys.platform == 'win32':
             try:
                 import colorama
                 colorama.init()
             except ImportError:
-                pass
+                # Enable VT100 processing on Windows 10+
+                try:
+                    import ctypes
+                    kernel32 = ctypes.windll.kernel32
+                    kernel32.SetConsoleMode(
+                        kernel32.GetStdHandle(-11), 7
+                    )
+                except Exception:
+                    pass
 
     def clear_screen(self):
         """Clear the terminal screen"""
@@ -36,37 +44,37 @@ class Renderer:
     def render(self, buffer, violations_count=0, status_text="", force_full_redraw=False):
         """Render buffer to screen with minimal flicker"""
 
-        # Only clear and redraw border if needed
         if not self.border_drawn or force_full_redraw:
             self.clear_screen()
-            self.hide_cursor()  # Hide cursor for cleaner game display
-            print("╔" + "═" * self.width + "╗")
+            self.hide_cursor()
+            # Top border
+            print("+" + "-" * self.width + "+")
+            # Game area
             for row in buffer:
-                print("║" + ''.join(row) + "║")
-            print("╚" + "═" * self.width + "╝")
-            # print(f"\n  Privacy Violations Destroyed: {violations_count}")  # Removed redundant text
-            print(f"  {status_text:<60}")
-            # Only show instructions when idle (no status text)
+                print("|" + ''.join(row) + "|")
+            # Bottom border
+            print("+" + "-" * self.width + "+")
+            # Status line
+            print(f"  {status_text:<{self.width - 2}}")
+            # Instructions (only when idle)
             if not status_text:
                 print("\n  Press any key to launch nuke")
-            # print("  NOTE: You'll need to re-login each Claude terminal session")  # Removed all text below game area
             self.border_drawn = True
             self.last_status = status_text
         else:
-            # Use ANSI codes to just update the interior
+            # Incremental update — just redraw the interior rows
             for i, row in enumerate(buffer):
-                print(f"\033[{i+2};1H║" + ''.join(row) + "║", end="")
+                # Row i+2 because line 1 is the top border
+                print(f"\033[{i + 2};1H|" + ''.join(row) + "|", end="")
 
             # Update status if changed
             if status_text != self.last_status:
-                print(f"\033[{self.height + 4};3H  {status_text:<60}", end="")
+                status_row = self.height + 3
+                print(f"\033[{status_row};1H  {status_text:<{self.width - 2}}", end="")
                 self.last_status = status_text
 
-            # Update violations count - Removed redundant text
-            # print(f"\033[{self.height + 3};3HPrivacy Violations Destroyed: {violations_count}  ", end="")
-
-            # Move cursor to safe position
-            print(f"\033[{self.height + 5};1H", end="", flush=True)  # Adjusted position for text below
+            # Park cursor below the frame
+            print(f"\033[{self.height + 5};1H", end="", flush=True)
 
     def draw_frame(self, buffer, stars, ship_frame, ship_x):
         """Draw a frame to the buffer"""
@@ -81,12 +89,14 @@ class Renderer:
             if 0 <= y < self.height and 0 <= x < self.width:
                 buffer[y][x] = star['char']
 
-        # Draw ship
-        ship_y = self.height - 4
+        # Draw ship (each line is 10 chars wide, centered on ship_x)
+        ship_y = self.height - 5
         for i, line in enumerate(ship_frame):
+            half = len(line) // 2
             for j, char in enumerate(line):
-                x = ship_x - 4 + j
+                x = ship_x - half + j
                 if 0 <= x < self.width and char != ' ':
-                    buffer[ship_y + i][x] = char
+                    if 0 <= ship_y + i < self.height:
+                        buffer[ship_y + i][x] = char
 
         return buffer

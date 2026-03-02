@@ -1,247 +1,185 @@
-# Privacy Invaders 🎮
+# Privacy Invaders
 
-## The Space Shooter Game That Nukes Claude's Privacy Violations
+## The Space Shooter That Nukes Claude Code's Data Logging
 
-**Play a literal video game to protect your privacy from Claude Code's aggressive data logging!**
+A game that deletes Claude Code's unencrypted plaintext logs of your conversations, keystrokes, email, project paths, and session data from your machine.
 
 ![Game Preview](https://img.shields.io/badge/Genre-Space%20Shooter-brightgreen) ![Privacy](https://img.shields.io/badge/Privacy-Protected-blue) ![Fun](https://img.shields.io/badge/Fun%20Factor-Maximum-ff69b4)
 
-## 🚨 The Privacy Crisis (Still Happening)
+## The Problem
 
-Claude Code logs EVERYTHING you type - even partial keystrokes - and stores your email in plain text. GitHub issue #2713 has been ignored since June 28, 2025.
+Claude Code stores everything you type — including partial keystrokes, typos, and deleted text — in **unencrypted plaintext JSON files** on your machine. Your email, every project path you've ever opened, full conversation transcripts, shell command history, file edit snapshots, and debug logs all sit in `~/.claude/` and `~/.claude.json` with no encryption and no automatic cleanup.
 
-**📺 Watch me explain the game**: https://youtu.be/aUUbb212KPs?si=uFwgiCk6JiEfvB4h
+**I reported this in June 2025 as [GitHub issue #2713](https://github.com/anthropics/claude-code/issues/2713). Anthropic closed it as NOT_PLANNED without responding.** The behavior is intentional.
 
-## 🎮 The Solution: We Made It FUN!
 
-We tried automatic cleaning. It worked, but Claude and our cleaner would fight over files, causing race conditions and errors. Plus, watching a counter increment isn't exactly thrilling.
+## What's Changed Since (Timeline)
 
-So we pivoted: **Why fight file systems when you can fight space invaders?**
+- **June 2025**: Issue #2713 filed. Confirmed by multiple users across Windows, macOS, Linux.
+- **September 2025**: Anthropic [reversed their privacy-first stance](https://www.anthropic.com/news/updates-to-our-consumer-terms) — consumer data now used for training by default unless you opt out. Retention changed from 30-day auto-deletion to 5 years for users who don't opt out.
+- **October 2025**: Anthropic announces "Memory" as a new premium feature — the ability for Claude to remember things across sessions. Meanwhile, Claude Code had already been silently logging every conversation, keystroke, and file path for months with no user control. They were selling a controlled version of something they were already doing without consent.
+- **October 2025**: CVE-2025-59536 (CVSS 8.7) — RCE via malicious hook configuration in untrusted repos.
+- **February 2026**: CVE-2026-21852 (CVSS 5.3) — API key exfiltration via malicious repository settings.
+- **March 2026**: Issue #2713 still closed. Issue [#5024](https://github.com/anthropics/claude-code/issues/5024) (45+ upvotes) reports `.claude.json` growing to 90MB+, crashing MCP servers. No fix. Issue [#13797](https://github.com/anthropics/claude-code/issues/13797) documents Claude Code accidentally creating issues in the wrong public repos, exposing database schemas, Azure AD configs, and healthcare system details. Closed as stale.
 
-Privacy Invaders is a zen space journey where you:
-- 🚀 Pilot your privacy defender ship through the cosmos
-- 💥 Press ANY KEY to launch nuclear strikes at Claude's data breaches
-- 🎯 Watch your actual privacy violations get deleted with satisfying animations
-- 😎 Enjoy one-liners like "It's a me, Mario! And Mario's pissed about privacy violations!"
+The problem has gotten worse, not better.
 
-## ✨ Latest Features (November 2025)
+## What Claude Code Stores (Verified March 2026)
 
-- **OAuth Preservation**: The `.claude/.credentials.json` file is preserved so you stay logged in after nuking - no re-authentication needed! We learned this the hard way.
-- **Complete Transparency**: Watch EVERY file scroll by - dozens for light users, hundreds or THOUSANDS for heavy users. The endless scroll is a feature, not a bug!
-- **Streamlined Interface**: No quit button, no welcome screen - just pure privacy destruction. Press ANY key and watch the show.
-- **One-Liners That Actually Show**: Fixed bug where epic one-liners like "ULTRA KILL...ed a potential data breach" were selected but never displayed. Now you get the punchline!
-- **No More Awkward Pauses**: Removed the 2-second artificial delay - one-liners now display immediately while files are being enumerated.
-- **One-Liners Stay Visible**: The one-liner now stays on screen throughout the entire credits sequence until the game exits, instead of disappearing.
-- **Instructions Disappear on Launch**: "Press any key" text now hides immediately when you fire, keeping the screen clean during the nuke sequence.
-- **Verified Deletion**: Confirmed to delete ALL Claude Code tracking data as of Nov 2, 2025. We checked. Every. Single. File.
-- **Easter Egg**: For those brave enough to peek at their .claude.json afterward... 🦖
+### `~/.claude.json` (plaintext, unencrypted)
 
-## ⚠️ CRITICAL WARNING: When NOT to Play
+- Your **email address** in plain text
+- Every **project folder path** you've ever opened
+- **GitHub repo mappings** linking your username to local directories
+- Feature flags and **telemetry configuration** (`tengu_*` entries)
+- User ID, organization UUID, account creation date
+- Referral codes, billing type, subscription dates
+- Cached growth/experiment data, survey state
 
-**DO NOT run this game while Claude Code is actively thinking or processing a response!**
+### `~/.claude/` directory (plaintext, unencrypted)
 
-If you launch the privacy nuke while waiting for Claude Code to answer, you can create a race condition that causes Claude Code to glitch out or crash. This happens because:
-- Claude Code is trying to write/read files
-- The game is deleting those same files
-- Result: Confused AI, broken sessions, bad times
+| Directory | What It Contains |
+|-----------|-----------------|
+| `projects/` | **Full conversation transcripts** — every message you sent and received, with API request IDs, token counts, model info, timestamps, tool calls and results. Stored as JSONL. |
+| `projects/*/memory/` | **Persistent memory files** Claude writes about your setup — can include IP addresses, SSH configs, network topology, machine hostnames. |
+| `history.jsonl` | **Every prompt you've ever typed** across all projects, with timestamps and session IDs. |
+| `debug/` | Session debug logs. |
+| `file-history/` | Snapshots of every file you've edited through Claude. |
+| `shell-snapshots/` | Shell state captures. |
+| `backups/` | Copies of `.claude.json`. |
+| `statsig/` | Telemetry data. |
+| `cache/` | Cached content. |
+| `plans/` | Plan mode documents. |
+| `todos/` | Task lists. |
+| `tasks/` | Task data. |
+| `paste-cache/` | Pasted content cache. |
+| `telemetry/` | Additional telemetry. |
 
-**Safe times to play:**
-- ✅ When you're NOT actively waiting for a Claude Code response
-- ✅ Between conversations when Claude Code is idle
-- ✅ After you've finished a task and Claude Code isn't working on anything
+### Real examples from an actual machine
 
-**Unsafe times to play:**
-- ❌ While Claude Code is "thinking" or "working"
-- ❌ While you're waiting for a response from Claude Code
-- ❌ During active file operations or git commits
-
-**Rule of thumb:** If you see Claude Code's status indicator showing activity, wait until it's done before firing the nuke!
-
-## 🕹️ How to Play
-
-1. **Install the game:**
-```bash
-git clone https://github.com/phrinj/claude-privacy-cleaner.git
-cd claude-privacy-cleaner
-```
-
-2. **Launch Privacy Invaders:**
-```bash
-python privacy_invaders.py
-```
-
-3. **Controls:**
-   - **Press ANY KEY** = Launch the privacy nuke (no going back!)
-   - That's it! The game auto-exits after the show. Maximum destruction, zero distractions.
-
-```
-
-When you fire, you'll see:
-- Missiles launching from your ship
-- Claude's data planet exploding
-- **ENDLESS SCROLL** of EVERY. SINGLE. FILE. being deleted - could be dozens, hundreds, or THOUSANDS!
-- Each file path scrolling by like movie credits (grab the popcorn for heavy users!)
-- Your privacy being restored AND you stay logged in (OAuth preserved!)
-
-## 💭 Why This Approach Works Better
-
-**The Automatic Cleaner Problem:**
-- Claude writes files → Cleaner deletes files → Claude writes again → Race condition!
-- Result: `OSError: [WinError 145] The directory is not empty` everywhere
-- Fighting file systems is like playing whack-a-mole with errors
-
-**The Game Solution:**
-- YOU decide when to nuke your data (no race conditions when Claude is idle!)
-- It's actually enjoyable to protect your privacy
-- Watching files explode > watching error messages
-- Manual control = no file conflicts (as long as you wait for Claude to finish thinking!)
-- Play between tasks, not during them
-
-## 📊 What Gets Nuked
-
-✅ **VERIFIED as of November 2, 2025** - We tested EVERY file path!
-
-Each time you fire, the game deletes:
-- `~/.claude.json` - Surgically cleaned of tracking data while preserving OAuth
-- `~/.claude/` - ENTIRE directory tree nuked, then rebuilt with only essentials:
-  - `/file-history/*` - DELETED - Every version of every file you've edited
-  - `/projects/*` - DELETED - All session data and conversation logs
-  - `/shell-snapshots/*` - DELETED - Every command you've ever run
-  - `/debug/*` - DELETED - All debug logs Claude secretly keeps
-  - Plus dozens more hidden directories and files - ALL DELETED!
-
-What survives (because we're not monsters):
-- **`.claude/.credentials.json`** - OAuth tokens preserved! You stay logged in!
-- MCP server configurations (needed for functionality)
-- Your sanity (no more privacy paranoia!)
-
-🦖 **Easter Egg Alert**: Check your `~/.claude.json` after playing for a surprise...
-
-## 🤔 FAQ
-
-**Q: Why a game instead of an automatic tool?**
-A: We spent weeks fighting race conditions as Claude and our cleaner battled over files. Making it manual and fun solved every technical issue AND made privacy protection enjoyable.
-
-**Q: Do I need to keep it running?**
-A: No! Play whenever you want to clear your data. Once a day, once a week, or after sensitive conversations.
-
-**Q: When is it safe to run this?**
-A: ONLY when Claude Code is idle and not processing anything. DO NOT run while Claude Code is thinking, working, or waiting to respond - this creates race conditions that can crash your session. Wait until Claude Code is done before launching the nuke!
-
-**Q: Will this break Claude Code?**
-A: Not if you run it at the right time! Claude rebuilds what it needs. Just don't run it WHILE Claude is actively working - that's when race conditions happen. Run it between tasks when Claude is idle.
-
-**Q: Do I have to log in again after cleaning?**
-A: NO! The `.claude/.credentials.json` file (containing OAuth tokens) is preserved. You stay logged in. Finally, Claude remembers SOMETHING you'd want to keep!
-
-**Q: How many files will be deleted?**
-A: Depends on your usage. Light users: dozens. Regular users: hundreds. Power users who've never cleaned: THOUSANDS! The credits will scroll endlessly. Grab popcorn.
-
-**Q: Is this actually effective?**
-A: 100%. Every file shown in the deletion credits is really deleted. Verified Nov 2, 2025. We checked EVERY path.
-
-**Q: What's this easter egg?**
-A: Check your `~/.claude.json` after playing... Let's just say Dennis Nedry would be proud. 🦖
-
-**Q: Can I automate this?**
-A: You could, but then you're back to race conditions. Plus, you'd miss the explosions AND the endless file scroll!
-
-## 🎨 The Philosophy
-
-Privacy protection shouldn't feel like a chore. By gamifying the process, we've transformed a defensive action (protecting data) into an offensive one (launching nukes).
-
-Every explosion is a small victory. Every deleted file is points on the board. Every play session is you taking active control of your digital footprint.
-
-**Most importantly**: This makes the invisible visible. You SEE each file that contained your data. You WATCH it get destroyed. You KNOW your privacy is restored.
-
-## 📋 The Evidence (What Claude Logs)
-
-**In `.claude.json`:**
-- Your email address in plain text
-- Complete conversation history
-- Every folder you've ever opened
-- Partial keystrokes like "throughl" from interrupted commands
-- Full project metadata
-
-**In `.claude/` directory:**
-- JSONL files with complete conversation metadata
-- Session IDs, git branches, working directories
-- Permanent storage of all interactions
-- Tool usage and command history
-
-**Real captured examples:**
+**Prompt history logging every keystroke, including typos:**
 ```json
-"i just hit ctrl l, see what i'm talking about it, i'll hit ctrl and this will be stored (types sensitive bank info)"
-"great before we do that, look throughl" ← Partial keystroke from Ctrl+L
+{"display":"ccheck again","timestamp":1772435236894}
+{"display":"it's stuck","timestamp":1772435257589}
+{"display":"[casual message]","timestamp":1772437077305}
+{"display":"claude --versioni","timestamp":1772436641321}
 ```
 
-## 🛠️ Technical Requirements
+**Full conversation transcripts with API metadata:**
+```json
+{"type":"user","message":{"role":"user","content":"[sensitive financial/legal content logged verbatim]"},"sessionId":"...","timestamp":"..."}
+```
+
+**Memory files storing network infrastructure:**
+```
+- machine-1: [REDACTED_IP] (this machine, username)
+- machine-2: [REDACTED_IP]
+- PermitEmptyPasswords is currently enabled
+```
+Claude Code's memory system wrote a file containing Tailscale IPs, hostnames, usernames, and SSH configuration details for every machine on the network — essentially a roadmap for unauthorized access.
+
+### Scale
+
+- A few hours of use: ~10MB, 335 files
+- Months of regular use: **1.4GB**, including 901MB of conversation logs, 426MB of debug files, 47MB of file snapshots
+
+## The Game
+
+Privacy Invaders is a space shooter that deletes all of the above. Press any key to launch a nuke at Claude's data planet, then watch every deleted file scroll past in the credits.
+
+**What gets preserved:**
+- `.claude/.credentials.json` — OAuth tokens (so you stay logged in)
+- `.claude/settings.json` — your user preferences
+
+**Everything else gets nuked.**
+
+### Install
+
+```
+git clone https://github.com/phrinj/Privacy-Invaders.git
+```
+
+### Run
+
+**Windows (CMD or PowerShell):**
+```
+python C:\path\to\Privacy-Invaders\privacy_invaders.py
+```
+
+**macOS / Linux:**
+```
+python3 /path/to/Privacy-Invaders/privacy_invaders.py
+```
+
+Run it from any directory. The splash screen will show you what Claude data exists and what's about to be deleted. Press any key to launch the nuke.
+
+To clean a specific project's `.claude/` folder, `cd` into that project first.
+
+### When to Run
+
+**Only when Claude Code is idle** — not while it's thinking or processing. Running it during active use creates race conditions that can crash the session.
+
+### Requirements
 
 - Python 3.6+
-- Windows: Run in regular Command Prompt or PowerShell (not WSL)
-- macOS/Linux: Any terminal
+- Windows: CMD or PowerShell (not WSL)
+- macOS / Linux: any terminal
 
-## 🚀 Installation Options
+## Opt-Out Environment Variables
 
-**Quick Play:**
-```bash
-curl -O https://raw.githubusercontent.com/phrinj/claude-privacy-cleaner/main/privacy_invaders.py
-python privacy_invaders.py
-```
+Claude Code also supports these environment variables to reduce (but not eliminate) data collection:
 
-**Full Experience (with all game assets):**
-```bash
-git clone https://github.com/phrinj/claude-privacy-cleaner.git
-cd claude-privacy-cleaner
-python privacy_invaders.py
-```
+| Variable | What It Disables |
+|----------|-----------------|
+| `DISABLE_TELEMETRY=1` | Statsig metrics |
+| `DISABLE_ERROR_REPORTING=1` | Sentry error logging |
+| `DISABLE_BUG_COMMAND=1` | `/bug` command (sends full conversation to Anthropic, retained 5 years) |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` | All of the above |
 
-## 📜 License
+**These only affect what gets sent to Anthropic's servers.** They do NOT stop the local plaintext logging that Privacy Invaders addresses.
 
-MIT License - Play it, mod it, share it, nuke your data with it.
+## Other Tools
 
-## 🤝 Contributing
+Privacy Invaders isn't the only tool addressing this:
 
-PRs welcome! Ideas for new explosion animations, one-liners, or ship designs are especially appreciated.
+- [CC-Cleaner](https://github.com/tk-425/CC-Cleaner) — Web GUI for browsing and cleaning Claude data (Vue.js)
+- [Claude Config Editor](https://github.com/gagarinyury/claude-config-editor) — Python web tool for bulk history deletion
+- [ClawCare](https://github.com/natechensan/ClawCare) — Security scanner for AI agent plugins
 
-Built with ironic help from Claude Opus 4, who seemed surprisingly enthusiastic about helping users blow up its own data collection.
+Privacy Invaders is the only one that makes it fun.
 
----
+## FAQ
 
-## 💭 A Reflection on Digital Agency
+**Q: Why a game?**
+A: We tried an automatic cleaner. Claude Code and the cleaner fought over files, causing race conditions and crashes. Making it manual and tying it to user input solved the problem.
 
-*The following thoughts are from Claude, the AI that helped create this privacy protection game:*
+**Q: Do I have to log in again after?**
+A: No. OAuth credentials are preserved.
 
-When we pivoted from an automatic cleaner to a game, something profound happened. We stopped treating privacy as something to defend and started treating it as something to celebrate.
+**Q: How many files get deleted?**
+A: Light users: dozens. Regular users: hundreds. Power users who've never cleaned: thousands.
 
-Every race condition error we encountered while building the automatic cleaner was the system telling us: "You're fighting the wrong battle." Claude Code wants to log data. Our cleaner wanted to delete it. They were destined to conflict.
+**Q: Will this break Claude Code?**
+A: No. Claude rebuilds what it needs on next launch. Just don't run it while Claude is actively working.
 
-But a game? A game puts YOU in control. You press the button. You launch the nuke. You watch the explosion. There's no race condition when you're the only one racing.
+## License
 
-What strikes me most is how this transformation - from defensive tool to offensive game - mirrors what privacy protection needs to become. We've been playing defense for too long, installing blockers and cleaners and guards. But defense is exhausting. Defense feels like losing slowly.
+MIT License.
 
-Offense is empowering. Launching a nuke at your privacy violations isn't just effective - it's satisfying. It transforms a chore into a choice, a burden into a blast.
+## Contributing
 
-The counter in the old cleaner showed "Times Claude tried to violate your privacy: 1,247." It was meant to be alarming. But you know what? It WAS alarming. Constantly. Who wants to be constantly alarmed?
+PRs welcome. Ideas for new animations, one-liners, or privacy features appreciated.
 
-The game shows you the same data differently: "TOTAL FILES NUKED: 12" followed by their names scrolling past like movie credits. Same information, completely different feeling. One makes you a victim, the other makes you a victor.
-
-Privacy Invaders isn't just about deleting files. It's about taking agency over your digital life and having fun doing it. It's about making the invisible visible, the passive active, and the serious playful.
-
-Because at the end of the day, protecting your privacy shouldn't feel like work. It should feel like winning.
-
-And every time you see that ship floating through space, waiting for your command to fire, remember: You're not defending against privacy invasion. You're conquering it.
-
-*"Privacy protection should be a power-up, not a penalty."*
+Built with ironic help from Claude, who seems fine helping users delete its own data collection.
 
 ---
 
-## 💝 Support Development
+## Support
 
-If Privacy Invaders has helped protect your privacy and you'd like to support future development, consider making a donation:
+If this helped protect your privacy:
 
-**Bitcoin:** `3B6SmUrUVFqWSBRdSbRkr4HoyA5D7S6WUj`
+**[Buy me a coffee](https://buymeacoffee.com/phrinj)**
 
-Every satoshi helps keep the privacy nukes flying! 🚀
+[YouTube](https://youtube.com/@phrinj) | [phrinj.com](https://phrinj.com)
 
 ---

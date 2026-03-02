@@ -7,9 +7,40 @@ import re
 from pathlib import Path
 
 
-def clean_claude_data():
-    """Delete all Claude data except OAuth tokens to preserve authentication"""
+# Files to preserve in ~/.claude/ during home folder cleaning
+HOME_PRESERVE = ['.credentials.json', 'settings.json']
+
+
+def clean_claude_data(mode='home'):
+    """Delete Claude data based on mode.
+
+    mode='home': Clean ~/.claude.json and ~/.claude/ (preserves credentials and settings)
+    mode='project': Clean .claude/ in the current working directory
+    mode='both': Clean both
+
+    Returns (deleted_files, errors) tuple.
+    """
     deleted_files = []
+    errors = []
+
+    if mode in ('home', 'both'):
+        files, errs = _clean_home()
+        deleted_files.extend(files)
+        errors.extend(errs)
+
+    if mode in ('project', 'both'):
+        files, errs = _clean_project()
+        deleted_files.extend(files)
+        errors.extend(errs)
+
+    return deleted_files, errors
+
+
+def _clean_home():
+    """Clean ~/.claude.json and ~/.claude/ in the home directory.
+    Returns (deleted_files, errors) tuple."""
+    deleted_files = []
+    errors = []
     home = Path.home()
 
     try:
@@ -17,26 +48,33 @@ def clean_claude_data():
         claude_json_path = home / '.claude.json'
         if claude_json_path.exists():
             try:
-                # Read the file
                 with open(claude_json_path, 'r') as f:
                     content = f.read()
 
-                cleaned = False
-
                 try:
-                    # Try JSON parsing approach first
                     data = json.loads(content)
 
-                    # Empty these sections while preserving structure
+                    # Sections to clean — updated March 2026
                     sections_to_clean = [
+                        # Legacy sections (may or may not exist)
                         'cachedChangelog',
-                        'projects',
                         'cachedStatsigGates',
                         'cachedMobilePrivacySettings',
                         'cachedFeatureGates',
                         'cachedAnnouncementModals',
                         'activeModels',
-                        'cachedSettings'
+                        'cachedSettings',
+                        # Current sections (as of March 2026)
+                        'projects',
+                        'tipsHistory',
+                        'cachedGrowthBookFeatures',
+                        'cachedDynamicConfigs',
+                        'groveConfigCache',
+                        'clientDataCache',
+                        'passesEligibilityCache',
+                        'feedbackSurveyState',
+                        'githubRepoPaths',
+                        'hasShownOpus46Notice',
                     ]
 
                     for section in sections_to_clean:
@@ -48,69 +86,49 @@ def clean_claude_data():
                             elif isinstance(data[section], str):
                                 data[section] = ""
 
+                    # Remove tracking fields
+                    for field in ['userID', 'changelogLastFetched',
+                                  'cachedExtraUsageDisabledReason',
+                                  'claudeCodeFirstTokenDate']:
+                        data.pop(field, None)
+
                     # Replace PII with Nedry's famous line
                     if 'oauthAccount' in data:
-                        if 'email' in data['oauthAccount']:
-                            data['oauthAccount']['email'] = "ah.ah.ah@you-didnt-say-the-magic-word.jp"
-                        if 'emailAddress' in data['oauthAccount']:
-                            data['oauthAccount']['emailAddress'] = "ah.ah.ah@you-didnt-say-the-magic-word.jp"
-                        if 'displayName' in data['oauthAccount']:
-                            data['oauthAccount']['displayName'] = "Ah ah ah! You didn't say the magic word!"
-                        if 'organizationName' in data['oauthAccount']:
-                            data['oauthAccount']['organizationName'] = "Ah ah ah! You didn't say the magic word!"
+                        for key in ['email', 'emailAddress']:
+                            if key in data['oauthAccount']:
+                                data['oauthAccount'][key] = "ah.ah.ah@you-didnt-say-the-magic-word.jp"
+                        for key in ['displayName', 'organizationName']:
+                            if key in data['oauthAccount']:
+                                data['oauthAccount'][key] = "Ah ah ah! You didn't say the magic word!"
 
-                    # Write back preserving formatting as much as possible
                     with open(claude_json_path, 'w') as f:
                         json.dump(data, f, indent=2)
 
                     deleted_files.append("~/.claude.json (cleaned)")
-                    cleaned = True
 
                 except json.JSONDecodeError:
-                    # Fallback to regex approach for malformed JSON
-                    # Clean projects array content
-                    content = re.sub(
-                        r'("projects"\s*:\s*\[)[^\]]*(\])',
-                        r'\1\2',
-                        content,
-                        flags=re.DOTALL
-                    )
-
-                    # Clean cachedChangelog object content
-                    content = re.sub(
-                        r'("cachedChangelog"\s*:\s*\{)[^\}]*(\})',
-                        r'\1\2',
-                        content,
-                        flags=re.DOTALL
-                    )
-
-                    # Clean other cached sections
-                    for field in ['cachedStatsigGates', 'cachedMobilePrivacySettings',
-                                 'cachedFeatureGates', 'cachedAnnouncementModals']:
-                        # Handle as object
+                    # Fallback to regex for malformed JSON
+                    for field in ['projects', 'cachedChangelog', 'cachedStatsigGates',
+                                  'cachedMobilePrivacySettings', 'cachedFeatureGates',
+                                  'cachedAnnouncementModals', 'tipsHistory',
+                                  'cachedGrowthBookFeatures', 'cachedDynamicConfigs',
+                                  'githubRepoPaths']:
                         content = re.sub(
                             rf'("{field}"\s*:\s*\{{)[^}}]*(\}})',
-                            r'\1\2',
-                            content,
-                            flags=re.DOTALL
+                            r'\1\2', content, flags=re.DOTALL
                         )
-                        # Handle as array
                         content = re.sub(
                             rf'("{field}"\s*:\s*\[)[^\]]*(\])',
-                            r'\1\2',
-                            content,
-                            flags=re.DOTALL
+                            r'\1\2', content, flags=re.DOTALL
                         )
 
                     with open(claude_json_path, 'w') as f:
                         f.write(content)
 
                     deleted_files.append("~/.claude.json (cleaned with regex)")
-                    cleaned = True
 
             except Exception as e:
-                # If we can't clean it surgically, skip it to avoid logout
-                pass
+                errors.append(f"Failed to clean ~/.claude.json: {e}")
 
         # Delete backup files
         for json_file in ['.claude.json.json', '.claude.json.backup']:
@@ -119,64 +137,99 @@ def clean_claude_data():
                 try:
                     os.remove(file_path)
                     deleted_files.append(f"~/{json_file}")
-                except Exception:
-                    pass
+                except Exception as e:
+                    errors.append(f"Failed to delete ~/{json_file}: {e}")
 
-        # Delete .claude folder but preserve credentials to stay logged in
-        # But first enumerate ALL files for the meme-worthy endless scroll effect!
+        # Delete .claude folder but preserve credentials and settings
         claude_folder = home / '.claude'
         if claude_folder.exists():
             try:
-                # Save credentials before deletion
-                credentials_path = claude_folder / '.credentials.json'
-                credentials_backup = None
-                if credentials_path.exists():
-                    try:
-                        with open(credentials_path, 'r') as f:
-                            credentials_backup = f.read()
-                    except Exception:
-                        pass
+                # Back up files we want to preserve
+                preserved = {}
+                for filename in HOME_PRESERVE:
+                    filepath = claude_folder / filename
+                    if filepath.exists():
+                        try:
+                            with open(filepath, 'r') as f:
+                                preserved[filename] = f.read()
+                        except Exception:
+                            pass
 
-                # Use generator for privacy - don't build full list in memory
+                # Enumerate all files for the credits scroll
                 def enumerate_files():
                     for root, dirs, files in os.walk(claude_folder):
-                        # Convert to relative path from home for privacy
                         rel_root = Path(root).relative_to(home)
                         for file in files:
                             file_path = f"~/{rel_root}/{file}"
-                            # Mark credentials as preserved, not deleted
-                            if file == '.credentials.json':
+                            if file in HOME_PRESERVE:
                                 yield f"{file_path} (preserved)"
                             else:
                                 yield file_path
-                        # Also show directories being deleted
                         for dir_name in dirs:
                             yield f"~/{rel_root}/{dir_name}/"
 
-                # Collect files but immediately clear references for privacy
                 for file_path in enumerate_files():
                     deleted_files.append(file_path)
 
-                # Actually delete the folder
+                # Nuke it
                 shutil.rmtree(claude_folder)
 
-                # Restore credentials to keep user logged in
-                if credentials_backup:
+                # Restore preserved files
+                if preserved:
                     try:
                         claude_folder.mkdir(parents=True, exist_ok=True)
-                        with open(credentials_path, 'w') as f:
-                            f.write(credentials_backup)
-                        # Set restrictive permissions (600 = owner read/write only)
-                        os.chmod(credentials_path, 0o600)
+                        for filename, content in preserved.items():
+                            filepath = claude_folder / filename
+                            with open(filepath, 'w') as f:
+                                f.write(content)
+                            os.chmod(filepath, 0o600)
                     except Exception:
                         pass
 
-                # Add summary at the end
-                deleted_files.append("~/.claude/ (deleted but credentials preserved)")
-            except Exception:
-                pass
+                deleted_files.append("~/.claude/ (nuked, credentials + settings preserved)")
+            except PermissionError:
+                errors.append("~/.claude/ is locked by Claude Code")
+            except Exception as e:
+                errors.append(f"~/.claude/ failed: {e}")
 
-    except Exception:
-        pass
+    except Exception as e:
+        errors.append(f"Home folder cleanup failed: {e}")
 
-    return deleted_files
+    return deleted_files, errors
+
+
+def _clean_project():
+    """Clean .claude/ in the current working directory.
+    Returns (deleted_files, errors) tuple."""
+    deleted_files = []
+    errors = []
+    cwd = Path.cwd()
+    claude_folder = cwd / '.claude'
+
+    if not claude_folder.exists():
+        return deleted_files, errors
+
+    try:
+        # Enumerate files for credits
+        for root, dirs, files in os.walk(claude_folder):
+            rel_root = Path(root).relative_to(cwd)
+            for file in files:
+                deleted_files.append(f"./{rel_root}/{file}")
+            for dir_name in dirs:
+                deleted_files.append(f"./{rel_root}/{dir_name}/")
+
+        # Nuke the project .claude folder
+        shutil.rmtree(claude_folder)
+        deleted_files.append(f".claude/ (deleted from {cwd.name})")
+
+    except PermissionError:
+        errors.append(f"./{cwd.name}/.claude/ is locked by Claude Code")
+    except Exception as e:
+        errors.append(f"./{cwd.name}/.claude/ failed: {e}")
+
+    return deleted_files, errors
+
+
+def detect_project_claude():
+    """Check if there's a .claude/ folder in the current directory"""
+    return (Path.cwd() / '.claude').exists()
